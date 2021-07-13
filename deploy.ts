@@ -7,7 +7,6 @@ addEventListener("fetch", async (e: any) => {
 });
 
 Object.assign(globalThis, Deno.env.toObject());
-console.log("ENV", Object.keys(Deno.env.toObject()));
 
 async function handle(req: Request) {
   if (req.method !== "POST") {
