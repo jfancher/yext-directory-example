@@ -68,7 +68,7 @@ export async function updateLocationDirectory(id: string, dry?: boolean) {
   const result: DirectoryUpdate = { id, region, city, applied: [] };
 
   if (entity.meta?.entityType !== "location") {
-    console.log(`${id} is ${entity.meta?.entityType}, not location; ignoring`);
+    console.log(`  ${id} is ${entity.meta?.entityType}, not location; ignoring`);
     return result;
   }
 
@@ -168,7 +168,7 @@ export async function updateLocationDirectory(id: string, dry?: boolean) {
     // but if the old region is now empty, delete it too
     if (oldRegionId) {
       let oldRegionEntity = await getEntity<DirectoryProfile>(oldRegionId);
-      if (oldRegionEntity?.c_directoryEntries?.length) {
+      if (!oldRegionEntity?.c_directoryEntries?.length) {
         console.log(`  deleting empty directory ${oldRegionId}`);
         await doDelete(oldRegionId);
         result.applied.push({ id: oldRegionId, kind: "delete", data: {} });
