@@ -1,4 +1,4 @@
-import { getEntity } from "./api.ts";
+import { EntityWebhookData, getEntity } from "./yext.ts";
 
 /**
  * Updates a location's directory hierarchy.
