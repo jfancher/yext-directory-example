@@ -30,8 +30,8 @@ export interface EntityWebhookData {
 }
 
 declare var YEXT_API_KEY: string;
-const API_BASE = "https://dev.yext.com/v2/accounts/me";
-const VER = "20210713";
+const API_BASE = "https://qa.yext.com/v2/accounts/me";
+const VER = "20210714";
 
 function buildUrl(path: string) {
   const result = new URL(API_BASE, path);

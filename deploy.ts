@@ -2,11 +2,11 @@ import { updateDirectory } from "./app.ts";
 
 // Entry point when running with Deno Deploy.
 // deno-lint-ignore no-explicit-any
-addEventListener("fetch", async (e: any) => {
+addEventListener("fetch", async (evt: any) => {
   try {
-    e.respondWith(await handle(e.request));
+    evt.respondWith(await handle(evt.request));
   } catch (e) {
-    e.respondWith(
+    evt.respondWith(
       new Response(Deno.inspect(e), {
         status: 500,
         headers: { "Content-Type": "text/plain; charset=utf-8" },
