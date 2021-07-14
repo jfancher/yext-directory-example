@@ -34,7 +34,7 @@ const API_BASE = "https://qa.yext.com/v2/accounts/me";
 const VER = "20210714";
 
 function buildUrl(path: string) {
-  const result = new URL(API_BASE, path);
+  const result = new URL(path, API_BASE);
   result.searchParams.append("api_key", YEXT_API_KEY);
   result.searchParams.append("v", VER);
   return result;
