@@ -19,6 +19,7 @@ export async function updateDirectory(data: EntityWebhookData) {
     }
   }
 
-  const result = await getEntity(data.entityId);
-  return result;
+  //const result = await getEntity(data.entityId);
+  //return result;
+  return Promise.resolve();
 }
