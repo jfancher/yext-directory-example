@@ -33,7 +33,7 @@ interface DirectoryUpdateAction {
  */
 export async function handleWebhook(data: EntityWebhookData) {
   const type = data.meta.eventType;
-  if (type === "CREATE_ENTITY" || type === "UPDATE_ENTITY") {
+  if (type === "ENTITY_CREATED" || type === "ENTITY_UPDATED") {
     return await updateLocationDirectory(data.entityId);
   }
   return null;
