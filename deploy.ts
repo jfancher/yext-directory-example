@@ -1,4 +1,4 @@
-import { updateDirectory } from "./app.ts";
+import { handleWebhook, updateLocationDirectory } from "./app.ts";
 
 // Entry point when running with Deno Deploy.
 // deno-lint-ignore no-explicit-any
@@ -18,30 +18,33 @@ addEventListener("fetch", async (evt: any) => {
 Object.assign(globalThis, Deno.env.toObject());
 
 async function handle(req: Request) {
-  if (req.method !== "POST") {
-    return new Response(null, {
-      status: 405,
-      statusText: "Method Not Allowed",
-    });
+  const url = new URL(req.url);
+
+  if (req.method === "GET" && url.pathname === "/test") {
+    const id = url.searchParams.get("id");
+    if (!id) {
+      return fail(400, "Bad Request");
+    }
+    const result = await updateLocationDirectory(id);
+    return json(result);
   }
 
-  const { pathname } = new URL(req.url);
-  if (pathname !== "/update") {
-    return new Response(null, {
-      status: 404,
-      statusText: "Not Found",
-    });
+  if (req.method === "POST" && url.pathname === "/update") {
+    if (!req.headers.get("Content-Type")?.includes("application/json")) {
+      return fail(415, "Unsupported Media Type");
+    }
+    const result = await handleWebhook(await req.json());
+    return json(result);
   }
 
-  if (!req.headers.get("Content-Type")?.includes("application/json")) {
-    return new Response(null, {
-      status: 415,
-      statusText: "Unsupported Media Type",
-    });
-  }
+  return fail(404, "Not Found");
+}
 
-  const body = await req.json();
-  const result = await updateDirectory(body);
+function fail(status: number, statusText: string) {
+  return new Response(null, { status, statusText });
+}
+
+function json(result: unknown) {
   return new Response(JSON.stringify(result), {
     headers: { "Content-Type": "application/json; charset=utf-8" },
   });

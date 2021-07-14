@@ -1,5 +1,27 @@
 export interface EntityProfile {
   [field: string]: ProfileValue;
+
+  meta?: {
+    accountId: string;
+    uid: string;
+    id: string;
+    timestamp: string;
+    folderId: string;
+    language: string;
+    countryCode: string;
+    entityType: string;
+  };
+
+  name?: string;
+
+  address?: {
+    line1?: string;
+    line2?: string;
+    city?: string;
+    region?: string;
+    postalCode?: string;
+    countryCode?: string;
+  };
 }
 
 export type ProfileValue =
@@ -7,6 +29,7 @@ export type ProfileValue =
   | number
   | boolean
   | null
+  | undefined
   | ProfileValue[]
   | { [k: string]: ProfileValue };
 
@@ -26,7 +49,18 @@ export interface EntityWebhookData {
     language: string;
     fieldNames: string[];
   };
-  [other: string]: unknown; // TODO: remove
+}
+
+export interface ApiResponse<T> {
+  meta: {
+    uuid: string;
+    errors: {
+      code: number;
+      message: string;
+      type: string;
+    }[];
+  };
+  response: T;
 }
 
 declare var YEXT_API_KEY: string;
@@ -40,11 +74,14 @@ function buildUrl(path: string) {
   return result;
 }
 
-export async function getEntity(id: string) {
+export async function getEntity<T extends EntityProfile>(
+  id: string,
+): Promise<T> {
   const url = buildUrl(`entities/${id}`);
   const response = await fetch(url);
   if (response.status < 200 || response.status >= 300) {
     throw response;
   }
-  return await response.json();
+  const body = await response.json() as ApiResponse<T>;
+  return body.response;
 }
