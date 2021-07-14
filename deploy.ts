@@ -3,7 +3,16 @@ import { updateDirectory } from "./app.ts";
 // Entry point when running with Deno Deploy.
 // deno-lint-ignore no-explicit-any
 addEventListener("fetch", async (e: any) => {
-  e.respondWith(await handle(e.request));
+  try {
+    e.respondWith(await handle(e.request));
+  } catch (e) {
+    e.respondWith(
+      new Response(Deno.inspect(e), {
+        status: 500,
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      }),
+    );
+  }
 });
 
 Object.assign(globalThis, Deno.env.toObject());
@@ -34,8 +43,6 @@ async function handle(req: Request) {
   const body = await req.json();
   const result = await updateDirectory(body);
   return new Response(JSON.stringify(result), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
   });
 }

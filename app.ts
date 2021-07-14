@@ -1,41 +1,24 @@
-declare var YEXT_API_KEY: string;
-
-interface WebhookData {
-  meta: {
-    eventType: string;
-    uuid: string;
-    timestamp: number;
-    accountId: string;
-    actor: string;
-    appSpecificAccountId: string;
-  };
-  entityId: string;
-  primaryProfile: { [field: string]: ProfileValue };
-  [other: string]: unknown;
-}
-
-type ProfileValue =
-  | string
-  | number
-  | boolean
-  | null
-  | ProfileValue[]
-  | { [k: string]: ProfileValue };
+import { getEntity } from "./api.ts";
 
 /**
  * Updates a location's directory hierarchy.
  *
  * @param data The webhook payload
  */
-export async function updateDirectory(data: WebhookData) {
+export async function updateDirectory(data: EntityWebhookData) {
   console.log("WEBHOOK: ", data.entityId, data.meta);
   console.log("FIELDS: ", Object.keys(data.primaryProfile));
   console.log("PROFILE META: ", data.primaryProfile["meta"]);
+  console.log("CHANGED: ", data.changedFields);
   for (const key in data) {
-    if (key !== "meta" && key !== "entityId" && key !== "primaryProfile") {
+    if (
+      key !== "meta" && key !== "entityId" && key !== "primaryProfile" &&
+      key !== "languageProfiles" && key !== "changedFields"
+    ) {
       console.log("EXTRA: ", key, data[key]);
     }
   }
 
-  await Promise.resolve(data);
+  const result = await getEntity(data.entityId);
+  return result;
 }
