@@ -8,7 +8,7 @@ addEventListener("fetch", async (evt: any) => {
   } catch (e) {
     evt.respondWith(
       new Response(Deno.inspect(e), {
-        status: 500,
+        status: 200,
         headers: { "Content-Type": "text/plain; charset=utf-8" },
       }),
     );
